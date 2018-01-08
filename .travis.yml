@@ -10,14 +10,19 @@ before_install:
 #   - npm update -g npm
 
 matrix:
-  -
-    name: test
-    script:
-      # Run test script, depending on istanbul install
-      - "test -n $(npm -ps ls istanbul) || npm test"
-      - "test -z $(npm -ps ls istanbul) || npm run-script test-travis"
-    after_script:
-      - "test -e ./coverage/lcov.info && npm install coveralls@2 && cat ./coverage/lcov.info | coveralls"
-  -
-    name: release
-    if: tag =~ ^v #release all vX.X.X tags
+  include:
+    -
+      stage: test
+      script:
+        # Run test script, depending on istanbul install
+        - "test -n $(npm -ps ls istanbul) || npm test"
+        - "test -z $(npm -ps ls istanbul) || npm run-script test-travis"
+      after_script:
+        - "test -e ./coverage/lcov.info && npm install coveralls@2 && cat ./coverage/lcov.info | coveralls"
+    -
+      stage: release
+      if: tag =~ ^v #release all vX.X.X tags
+      script:
+        - "npm pack"
+      after_script:
+        - "release-it --no-src.commit --no-npm.publish github.release github.assets='./react-phone-number-input-%s.tgz'"

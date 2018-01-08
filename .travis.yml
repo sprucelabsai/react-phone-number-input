@@ -23,4 +23,4 @@ matrix:
       script:
         - "npm pack"
       after_script:
-        - "release-it --no-src.commit --no-npm.publish github.release github.assets='./react-phone-number-input-%s.tgz'"
+        - "release-it"
